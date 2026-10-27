@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b0d">
+  <meta name="description" content="LCDM 机车制动显示器交互演示：CCBⅡ 主界面、F1–F8 页面自适应软键、左侧三键背光控制。">
+  <title>LCDM · CCBⅡ 机车制动显示器</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b0d0f'/%3E%3Crect x='10' y='14' width='44' height='28' rx='3' fill='none' stroke='%23f2b544' stroke-width='3'/%3E%3Cpath d='M17 50h4M28 50h4M39 50h4M50 50h-3' stroke='%23f2b544' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 6.8"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M9.5 5 4 10.5 9.5 16"/><path d="M4 10.5h9.2a6.3 6.3 0 0 1 0 12.6H11"/></symbol>
+    <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.2v5l3.2 2"/><path d="M5.2 5.1 3.6 3.5M18.8 5.1l1.6-1.6"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h15M15.5 4.5 19 8l-3.5 3.5"/><path d="M20 16H5M8.5 12.5 5 16l3.5 3.5"/></symbol>
+    <symbol id="i-pipe" viewBox="0 0 24 24"><path d="M3 8.5h8.2a4 4 0 0 1 4 4v7"/><path d="M3 5.5v6M15.2 19.5h5.6"/><path d="M17.4 16.2 20.8 19.5l-3.4 3.3"/><circle cx="15.2" cy="8.5" r="1.5"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="14.5" rx="3"/><path d="M5 10h14M8.5 14.5h.01M15.5 14.5h.01M8 18l-2 3M16 18l2 3"/></symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h10.2a3 3 0 1 0-2.9-3.8"/><path d="M3 12.5h15a3 3 0 1 1-2.9 3.8"/><path d="M3 17h7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.4 15.4 5 5M8 10.5h5M10.5 8v5"/></symbol>
+    <symbol id="i-sun-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/><path d="M12 9.3v5.4M9.3 12h5.4"/></symbol>
+    <symbol id="i-sun-down" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/><path d="M9.3 12h5.4"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><path d="M4 19 10.2 5h1.6L18 19"/><path d="M6.4 14.3h9.2"/><path d="M20.5 6v4M18.5 8h4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4.5 9.2A8 8 0 1 1 4 14"/><path d="M4.5 4.2v5h5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21 20H3l9-16.5Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.2 13.4a7.8 7.8 0 0 0 0-2.8l2-1.4-2-3.4-2.3 1a7.6 7.6 0 0 0-2.4-1.4L14.2 3h-4l-.4 2.4A7.6 7.6 0 0 0 7.4 6.8l-2.3-1-2 3.4 2 1.4a7.8 7.8 0 0 0 0 2.8l-2 1.4 2 3.4 2.3-1a7.6 7.6 0 0 0 2.4 1.4l.4 2.4h4l.4-2.4a7.6 7.6 0 0 0 2.4-1.4l2.3 1 2-3.4-2.1-1.4Z"/></symbol>
+    <symbol id="i-record" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h4"/></symbol>
+    <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 7h6M14 7h6M4 17h6M14 17h6"/><circle cx="12" cy="7" r="2.2"/><circle cx="12" cy="17" r="2.2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 4.6-3.4 7.6-8 9-4.6-1.4-8-4.4-8-9V6l8-3Z"/><path d="m8.3 12 2.4 2.4 5-5"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13.5 2.8-8 11h6l-1 7.4 8-11h-6l1-7.4Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6 13h.01M9.5 13h.01M13 13h.01M16.5 13h.01M8 16h8"/></symbol>
+  </svg>
+
+  <header class="topbar" id="top">
+    <div class="topbar__inner">
+      <a class="brand" href="#top" aria-label="LCDM 机车制动显示器首页">
+        <span class="brand__mark">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="18" rx="4"/><path d="M8 23v3M24 23v3M9 23h14M9 10h14"/><path d="M11 14h3M18 14h3M11 18h10" class="brand__screen"/></svg>
+        </span>
+        <span class="brand__type">
+          <strong>LCDM</strong>
+          <small>LOCOMOTIVE BRAKE DISPLAY</small>
+        </span>
+      </a>
+
+      <nav class="topnav" aria-label="页面导航">
+        <a href="#terminal" class="is-current">模拟终端</a>
+        <a href="#softkeys">软键定义</a>
+        <a href="#backlight">背光控制</a>
+        <a href="#workflow">操作流程</a>
+      </nav>
+
+      <div class="topbar__status">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>CCBⅡ</span>
+        <span class="topbar__status-sep"></span>
+        <span class="topbar__status-muted">SYSTEM READY</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__ghost" aria-hidden="true">08</div>
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <div class="eyebrow">
+            <span class="eyebrow__line"></span>
+            CCBⅡ · LOCOMOTIVE CONTROL DISPLAY MODULE
+          </div>
+          <div class="hero__product">
+            <span class="hero__product-code">LCDM</span>
+            <span class="hero__product-name">机车制动显示器</span>
+          </div>
+          <h1>八键掌控<br><span>全列制动</span></h1>
+          <p class="hero__lead">以 8 个页面自适应软键，完成参数确认、端位切换、列车管投切、客货制式与补风设置。左侧三键独立调节屏幕背光，还原 CCBⅡ 主界面的人机交互逻辑。</p>
+          <div class="hero__actions">
+            <a class="button button--amber" href="#terminal">
+              开始操作
+              <svg aria-hidden="true"><use href="#i-arrow"></use></svg>
+            </a>
+            <a class="button button--ghost" href="#softkeys">查看软键定义</a>
+          </div>
+          <div class="hero__meta">
+            <span><b>08</b> SOFT KEYS</span>
+            <span><b>03</b> DIMMER KEYS</span>
+            <span><b>CCBⅡ</b> STANDARD</span>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="LCDM 概览">
+          <div class="hero-panel__top">
+            <span>UNIT OVERVIEW</span>
+            <span class="mono">LCDM / 01</span>
+          </div>
+          <div class="hero-panel__main">
+            <div class="hero-panel__number">
+              <strong>08</strong>
+              <span>页面自适应<br>功能软键</span>
+            </div>
+            <div class="hero-panel__copy">
+              <span class="hero-panel__kicker">MAIN SCREEN</span>
+              <p>主界面功能固定，进入设置与查询页面后，软键文字自动切换。</p>
+            </div>
+          </div>
+          <div class="hero-panel__keys" aria-label="F1 到 F8 软键">
+            <div class="mini-key"><span>F1</span><b>确</b><small>确认</small></div>
+            <div class="mini-key"><span>F2</span><b>退</b><small>返回</small></div>
+            <div class="mini-key"><span>F3</span><b>设</b><small>设置</small></div>
+            <div class="mini-key"><span>F4</span><b>端</b><small>端位</small></div>
+            <div class="mini-key"><span>F5</span><b>管</b><small>列管</small></div>
+            <div class="mini-key"><span>F6</span><b>车</b><small>制式</small></div>
+            <div class="mini-key"><span>F7</span><b>风</b><small>补风</small></div>
+            <div class="mini-key"><span>F8</span><b>查</b><small>查询</small></div>
+          </div>
+          <div class="hero-panel__bottom">
+            <div><span>背光键</span><strong>03</strong></div>
+            <div><span>页面软键</span><strong>08</strong></div>
+            <div class="hero-panel__ready"><span class="live-dot"></span> READY</div>
+          </div>
+        </aside>
+      </div>
+      <div class="hero__rail" aria-hidden="true">
+        <span>CCBⅡ / BRAKE CONTROL</span>
+        <i></i>
+        <span>01</span>
+      </div>
+    </section>
+
+    <section class="terminal section" id="terminal">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-heading__meta">
+            <span class="section-num">01</span>
+            <span class="section-kicker">INTERACTIVE TERMINAL</span>
+          </div>
+          <div class="section-heading__row">
+            <h2>在屏幕上，完成一次制动配置</h2>
+            <p>点击实体软键，或直接使用键盘 <kbd>F1</kbd>–<kbd>F8</kbd>。端位、管路、制式与补风状态会同步到右侧监视区。</p>
+          </div>
+        </div>
+
+        <div class="sim-grid">
+          <div class="console-column">
+            <div class="console-stage">
+              <div class="console" id="console">
+                <span class="screw screw--tl"></span>
+                <span class="screw screw--tr"></span>
+                <span class="screw screw--bl"></span>
+                <span class="screw screw--br"></span>
+
+                <div class="console__head">
+                  <div class="console__brand">
+                    <span class="console__ccb">CCBⅡ</span>
+                    <span class="console__divider"></span>
+                    <span class="console__brandcopy">
+                      <strong>LOCOMOTIVE BRAKE CONTROL</strong>
+                      <small>DISPLAY MODULE · LCDM</small>
+                    </span>
+                  </div>
+                  <div class="console__tags">
+                    <span class="console__tag console__tag--amber">TRAINING UNIT</span>
+                    <span class="console__tag">REV. 02</span>
+                  </div>
+                </div>
+
+                <div class="console__body">
+                  <aside class="light-rail" aria-label="屏幕背光调节">
+                    <div class="light-rail__head">
+                      <span>BACKLIGHT</span>
+                      <i class="light-sensor" title="环境光传感器"></i>
+                    </div>
+                    <button class="light-key" type="button" data-backlight="up" aria-label="增亮键">
+                      <span class="light-key__cap">
+                        <svg aria-hidden="true"><use href="#i-sun-up"></use></svg>
+                      </span>
+                      <strong>增亮</strong>
+                      <small>BRIGHT +</small>
+                    </button>
+                    <button class="light-key" type="button" data-backlight="down" aria-label="减亮键">
+                      <span class="light-key__cap">
+                        <svg aria-hidden="true"><use href="#i-sun-down"></use></svg>
+                      </span>
+                      <strong>减亮</strong>
+                      <small>BRIGHT −</small>
+                    </button>
+                    <button class="light-key" type="button" data-backlight="auto" aria-label="自动亮度键">
+                      <span class="light-key__cap">
+                        <svg aria-hidden="true"><use href="#i-auto"></use></svg>
+                      </span>
+                      <strong>自动亮度</strong>
+                      <small>AUTO DIM</small>
+                    </button>
+                    <div class="light-rail__auto">
+                      <span class="auto-led" id="autoLed" aria-hidden="true"></span>
+                      <span>AUTO</span>
+                    </div>
+                    <div class="light-rail__scale" aria-hidden="true">
+                      <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <span class="light-rail__code">DIM&nbsp;CTRL</span>
+                  </aside>
+
+                  <div class="display-stack">
+                    <div class="screen-shell">
+                      <div class="screen-frame">
+                        <div class="screen" id="screen">
+                          <div class="screen__hud">
+                            <div class="screen__hud-brand">
+                              <span class="screen-led"></span>
+                              <b>CCBⅡ</b>
+                              <span>/</span>
+                              <span>制动显示</span>
+                            </div>
+                            <div class="screen__hud-page" id="screenPageTitle">主界面 <span>MAIN</span></div>
+                            <div class="screen__hud-meta">
+                              <span id="screenDate">--.--</span>
+                              <time id="screenClock">--:--:--</time>
+                              <span class="screen-auto" id="screenAuto">AUTO</span>
+                            </div>
+                          </div>
+
+                          <div class="screen__viewport">
+                            <section class="screen-page is-active" data-screen-page="main" aria-label="CCBⅡ 主界面">
+                              <div class="screen-ticker">
+                                <div class="ticker-primary">
+                                  <span class="ticker-lamp"></span>
+                                  <b id="tickerEnd">本务 · 操纵端</b>
+                                </div>
+                                <div class="ticker-item"><span>制式</span><b id="tickerMode">货车</b></div>
+                                <div class="ticker-item"><span>补风</span><b id="tickerFeed">补风</b></div>
+                                <div class="ticker-item"><span>列车管</span><b id="tickerPipe">投入</b></div>
+                                <div class="ticker-pending" id="tickerPending" hidden>
+                                  <span class="pending-dot"></span>待确认 <b id="tickerPendingCount">0</b>
+                                </div>
+                              </div>
+
+                              <div class="main-dashboard">
+                                <div class="dashboard-left">
+                                  <div class="gauge-row">
+                                  <article class="gauge" data-gauge="bp">
+                                    <div class="gauge__head"><span>列车管</span><small>BP</small></div>
+                                    <div class="gauge__dial">
+                                      <svg viewBox="0 0 120 78" aria-hidden="true">
+                                        <path class="gauge__arc" d="M16 70a44 44 0 0 1 88 0"/>
+                                        <g class="gauge__ticks">
+                                          <path d="M18 70v-5M60 26v5M102 70v-5M24 49l4.3-2.5M96 49l-4.3-2.5M39 33.9l2.5-4.3M81 33.9l-2.5-4.3"/>
+                                        </g>
+                                        <line class="gauge__needle" data-needle x1="60" y1="69" x2="60" y2="32"/>
+                                        <circle class="gauge__hub" cx="60" cy="69" r="3.2"/>
+                                      </svg>
+                                      <div class="gauge__value"><strong data-gauge-value>600</strong><span>kPa</span></div>
+                                    </div>
+                                    <div class="gauge__foot"><span class="gauge-state is-good" data-gauge-state>正常</span><span>0–1000</span></div>
+                                  </article>
+
+                                  <article class="gauge" data-gauge="bc">
+                                    <div class="gauge__head"><span>制动缸</span><small>BC</small></div>
+                                    <div class="gauge__dial">
+                                      <svg viewBox="0 0 120 78" aria-hidden="true">
+                                        <path class="gauge__arc" d="M16 70a44 44 0 0 1 88 0"/>
+                                        <g class="gauge__ticks">
+                                          <path d="M18 70v-5M60 26v5M102 70v-5M24 49l4.3-2.5M96 49l-4.3-2.5M39 33.9l2.5-4.3M81 33.9l-2.5-4.3"/>
+                                        </g>
+                                        <line class="gauge__needle" data-needle x1="60" y1="69" x2="60" y2="32"/>
+                                        <circle class="gauge__hub" cx="60" cy="69" r="3.2"/>
+                                      </svg>
+                                      <div class="gauge__value"><strong data-gauge-value>0</strong><span>kPa</span></div>
+                                    </div>
+                                    <div class="gauge__foot"><span class="gauge-state is-good" data-gauge-state>缓解</span><span>0–600</span></div>
+                                  </article>
+
+                                  <article class="gauge" data-gauge="er">
+                                    <div class="gauge__head"><span>均衡风缸</span><small>ER</small></div>
+                                    <div class="gauge__dial">
+                                      <svg viewBox="0 0 120 78" aria-hidden="true">
+                                        <path class="gauge__arc" d="M16 70a44 44 0 0 1 88 0"/>
+                                        <g class="gauge__ticks">
+                                          <path d="M18 70v-5M60 26v5M102 70v-5M24 49l4.3-2.5M96 49l-4.3-2.5M39 33.9l2.5-4.3M81 33.9l-2.5-4.3"/>
+                                        </g>
+                                        <line class="gauge__needle" data-needle x1="60" y1="69" x2="60" y2="32"/>
+                                        <circle class="gauge__hub" cx="60" cy="69" r="3.2"/>
+                                      </svg>
+                                      <div class="gauge__value"><strong data-gauge-value>600</strong><span>kPa</span></div>
+                                    </div>
+                                    <div class="gauge__foot"><span class="gauge-state is-good" data-gauge-state>正常</span><span>0–1000</span></div>
+                                  </article>
+                                  </div>
+                                  <div class="system-strip">
+                                    <div class="system-strip__title">
+                                      <span>制动系统</span>
+                                      <small>BRAKE SYSTEM</small>
+                                      <i></i>
+                                    </div>
+                                    <div class="system-item"><span>列车管定压</span><b>600<small>kPa</small></b></div>
+                                    <div class="system-item"><span>制动方式</span><b>自动<small>AUTO</small></b></div>
+                                    <div class="system-item"><span>压力采集</span><b class="text-good">正常<small>OK</small></b></div>
+                                  </div>
+                                  <div class="main-message">
+                                    <div class="main-message__head">
+                                      <span><i></i>系统消息</span>
+                                      <small>MESSAGE <b id="mainMessageTime">--:--</b></small>
+                                    </div>
+                                    <p id="mainMessage">列车管压力稳定，制动系统处于缓解状态。</p>
+                                  </div>
+                                </div>
+
+                                <aside class="run-panel">
+                                  <div class="run-panel__head"><span>运行状态</span><small>RUN</small></div>
+                                  <div class="run-mode">
+                                    <span class="run-mode__lamp"></span>
+                                    <div><small>制动状态</small><strong>缓解</strong></div>
+                                    <span class="run-mode__code">REL</span>
+                                  </div>
+                                  <div class="run-data">
+                                    <div><span>机车速度</span><strong>0.0<small>km/h</small></strong></div>
+                                    <div><span>总风压力</span><strong>850<small>kPa</small></strong></div>
+                                    <div><span>系统状态</span><strong class="text-good">正常<small>OK</small></strong></div>
+                                    <div><span>自检状态</span><strong class="text-good">5/5<small>PASS</small></strong></div>
+                                  </div>
+                                  <div class="run-hint" id="mainHint">
+                                    <svg aria-hidden="true"><use href="#i-info"></use></svg>
+                                    <span>F4–F7 修改配置，F1 保存生效</span>
+                                  </div>
+                                </aside>
+                              </div>
+                            </section>
+
+                            <section class="screen-page" data-screen-page="settings" aria-label="电空制动设置">
+                              <div class="page-subhead">
+                                <div>
+                                  <span class="page-subhead__kicker">ELECTRO-PNEUMATIC CONFIG</span>
+                                  <h2>电空制动设置</h2>
+                                </div>
+                                <span class="page-subhead__chip">F1 保存生效</span>
+                              </div>
+                              <div class="settings-list">
+                                <div class="setting-row" data-setting="end">
+                                  <div class="setting-row__copy">
+                                    <span class="setting-index">01</span>
+                                    <div><strong>操纵端 / 非操纵端</strong><small>本务 / 补机</small></div>
+                                  </div>
+                                  <div class="segmented" role="group" aria-label="操纵端选择">
+                                    <button type="button" data-option="end" data-value="lead">本务</button>
+                                    <button type="button" data-option="end" data-value="helper">补机</button>
+                                  </div>
+                                  <span class="setting-state" data-dirty-for="end">已同步</span>
+                                </div>
+                                <div class="setting-row" data-setting="pipe">
+                                  <div class="setting-row__copy">
+                                    <span class="setting-index">02</span>
+                                    <div><strong>列车管</strong><small>TRAIN PIPE</small></div>
+                                  </div>
+                                  <div class="segmented" role="group" aria-label="列车管状态">
+                                    <button type="button" data-option="pipe" data-value="in">投入</button>
+                                    <button type="button" data-option="pipe" data-value="out">切除</button>
+                                  </div>
+                                  <span class="setting-state" data-dirty-for="pipe">已同步</span>
+                                </div>
+                                <div class="setting-row" data-setting="mode">
+                                  <div class="setting-row__copy">
+                                    <span class="setting-index">03</span>
+                                    <div><strong>行车制式</strong><small>正常行车置货车</small></div>
+                                  </div>
+                                  <div class="segmented" role="group" aria-label="行车制式选择">
+                                    <button type="button" data-option="mode" data-value="freight">货车</button>
+                                    <button type="button" data-option="mode" data-value="passenger">客车</button>
+                                  </div>
+                                  <span class="setting-state" data-dirty-for="mode">已同步</span>
+                                </div>
+                                <div class="setting-row" data-setting="feed">
+                                  <div class="setting-row__copy">
+                                    <span class="setting-index">04</span>
+                                    <div><strong>补风模式</strong><small>FEED VALVE</small></div>
+                                  </div>
+                                  <div class="segmented" role="group" aria-label="补风模式选择">
+                                    <button type="button" data-option="feed" data-value="on">补风</button>
+                                    <button type="button" data-option="feed" data-value="off">不补风</button>
+                                  </div>
+                                  <span class="setting-state" data-dirty-for="feed">已同步</span>
+                                </div>
+                              </div>
+                              <div class="settings-note">
+                                <svg aria-hidden="true"><use href="#i-info"></use></svg>
+                                <span>使用 F4–F7 切换，确认无误后按 F1 写入运行配置。</span>
+                                <b data-settings-sync>4 / 4 已同步</b>
+                              </div>
+                            </section>
+
+                            <section class="screen-page" data-screen-page="diagnostics" aria-label="诊断查询">
+                              <div class="page-subhead page-subhead--diag">
+                                <div>
+                                  <span class="page-subhead__kicker">DIAGNOSTICS &amp; RECORDS</span>
+                                  <h2>查询中心</h2>
+                                </div>
+                                <span class="diag-time">最近自检 <b id="lastSelfTest">--:--:--</b></span>
+                              </div>
+                              <div class="diag-tabs" role="tablist" aria-label="诊断查询分类">
+                                <button class="diag-tab is-active" type="button" role="tab" id="tab-fault" aria-controls="panel-fault" aria-selected="true" data-diag-tab="fault"><span>F3</span><b>故障记录</b><small id="faultTabMeta">0 ACTIVE</small></button>
+                                <button class="diag-tab" type="button" role="tab" id="tab-records" aria-controls="panel-records" aria-selected="false" data-diag-tab="records"><span>F4</span><b>运行记录</b><small id="recordsTabMeta">SESSION</small></button>
+                                <button class="diag-tab" type="button" role="tab" id="tab-calibration" aria-controls="panel-calibration" aria-selected="false" data-diag-tab="calibration"><span>F5</span><b>标定参数</b><small>SENSORS</small></button>
+                                <button class="diag-tab" type="button" role="tab" id="tab-selftest" aria-controls="panel-selftest" aria-selected="false" data-diag-tab="selftest"><span>F6</span><b>自检结果</b><small>5 CHECKS</small></button>
+                              </div>
+                              <div class="diag-panels">
+                                <div class="diag-panel is-active" id="panel-fault" role="tabpanel" aria-labelledby="tab-fault" data-diag-panel="fault">
+                                  <div class="fault-summary">
+                                    <div><small>活动故障</small><strong class="text-good">00</strong><span>系统无活动故障</span></div>
+                                    <div><small>历史记录</small><strong>02</strong><span>均为已闭环事件</span></div>
+                                    <div class="fault-ok"><svg aria-hidden="true"><use href="#i-shield"></use></svg><span>制动控制<br>状态正常</span></div>
+                                  </div>
+                                  <div class="data-table">
+                                    <div class="data-table__head"><span>时间</span><span>代码</span><span>事件</span><span>状态</span></div>
+                                    <div class="data-table__row"><span>10-24 06:18</span><span>H-021</span><span>压力传感器短时波动</span><b class="is-closed">已闭环</b></div>
+                                    <div class="data-table__row"><span>10-21 19:42</span><span>H-008</span><span>通信看门狗复位</span><b class="is-closed">已闭环</b></div>
+                                  </div>
+                                </div>
+                                <div class="diag-panel" id="panel-records" role="tabpanel" aria-labelledby="tab-records" data-diag-panel="records">
+                                  <div class="records-list" id="recordsList"></div>
+                                </div>
+                                <div class="diag-panel" id="panel-calibration" role="tabpanel" aria-labelledby="tab-calibration" data-diag-panel="calibration">
+                                  <div class="calibration-grid">
+                                    <div class="cal-row"><span>列车管传感器</span><div class="cal-track"><i style="width:60%"></i></div><b>600 <small>kPa</small></b><em>正常</em></div>
+                                    <div class="cal-row"><span>制动缸传感器</span><div class="cal-track"><i style="width:4%"></i></div><b>0 <small>kPa</small></b><em>正常</em></div>
+                                    <div class="cal-row"><span>均衡风缸传感器</span><div class="cal-track"><i style="width:60%"></i></div><b>600 <small>kPa</small></b><em>正常</em></div>
+                                    <div class="cal-row"><span>总风传感器</span><div class="cal-track"><i style="width:85%"></i></div><b>850 <small>kPa</small></b><em>正常</em></div>
+                                  </div>
+                                  <p class="panel-note"><svg aria-hidden="true"><use href="#i-info"></use></svg>标定值只读显示；标定作业需在维护模式下进行。</p>
+                                </div>
+                                <div class="diag-panel" id="panel-selftest" role="tabpanel" aria-labelledby="tab-selftest" data-diag-panel="selftest">
+                                  <div class="selftest-summary" id="selftestSummary" aria-live="polite">
+                                    <div class="selftest-score"><strong id="selftestScore">5<small>/5</small></strong><span id="selftestScoreLabel">检查通过</span></div>
+                                    <div class="selftest-copy"><b id="selftestCopyTitle">系统自检全部通过</b><span id="selftestCopyText">主控制器、通信总线、压力传感器、显示单元与电源模块状态正常。</span></div>
+                                    <em id="selftestBadge">ALL PASS</em>
+                                  </div>
+                                  <div class="selftest-grid">
+                                    <div class="check is-pass"><span>01</span><b>主控制器</b><em>PASS</em></div>
+                                    <div class="check is-pass"><span>02</span><b>通信总线</b><em>PASS</em></div>
+                                    <div class="check is-pass"><span>03</span><b>压力传感器</b><em>PASS</em></div>
+                                    <div class="check is-pass"><span>04</span><b>显示单元</b><em>PASS</em></div>
+                                    <div class="check is-pass"><span>05</span><b>电源模块</b><em>PASS</em></div>
+                                  </div>
+                                  <p class="panel-note"><svg aria-hidden="true"><use href="#i-check"></use></svg><span id="selftestNote">5 项检查全部通过 · 按 F1 可重新执行自检</span></p>
+                                </div>
+                              </div>
+                            </section>
+                          </div>
+
+                          <div class="screen-softkeys" id="screenSoftkeys" aria-label="当前页面软键功能"></div>
+
+                          <div class="brightness-hud" id="brightnessHud" aria-hidden="true">
+                            <svg><use href="#i-sun-up"></use></svg>
+                            <span id="brightnessHudMode">AUTO</span>
+                            <div class="brightness-hud__bar"><i id="brightnessHudBar"></i></div>
+                            <b id="brightnessHudValue">82%</b>
+                          </div>
+
+                          <div class="screen__scanlines" aria-hidden="true"></div>
+                          <div class="screen__glass" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="softkey-deck">
+                      <div class="softkey-deck__head">
+                        <span>SOFT KEYS</span>
+                        <i></i>
+                        <span class="softkey-deck__hint"><svg aria-hidden="true"><use href="#i-keyboard"></use></svg> F1–F8</span>
+                      </div>
+                      <div class="softkey-row">
+                        <button class="softkey" type="button" data-key="1" aria-label="F1 确认执行"><span class="softkey__face"><b>F1</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="2" aria-label="F2 退出返回"><span class="softkey__face"><b>F2</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="3" aria-label="F3 电空制动"><span class="softkey__face"><b>F3</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="4" aria-label="F4 操纵端切换"><span class="softkey__face"><b>F4</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="5" aria-label="F5 列车管投切"><span class="softkey__face"><b>F5</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="6" aria-label="F6 货车客车切换"><span class="softkey__face"><b>F6</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="7" aria-label="F7 补风不补风"><span class="softkey__face"><b>F7</b><i></i></span></button>
+                        <button class="softkey" type="button" data-key="8" aria-label="F8 查询中心"><span class="softkey__face"><b>F8</b><i></i></span></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="console__foot">
+                  <div class="console__leds">
+                    <span><i class="led is-on"></i>PWR</span>
+                    <span><i class="led is-on"></i>COMM</span>
+                    <span><i class="led"></i>FAULT</span>
+                  </div>
+                  <div class="console__foot-note">TRAINING SIMULATOR · NOT FOR REAL OPERATION</div>
+                  <div class="console__serial">UNIT&nbsp; 08 / CCBⅡ</div>
+                </div>
+              </div>
+            </div>
+            <div class="console-caption">
+              <span><svg aria-hidden="true"><use href="#i-info"></use></svg> 背光三键即时生效；运行参数需按 F1 保存。</span>
+              <span class="console-caption__hint">移动端可横向滑动查看整机</span>
+            </div>
+          </div>
+
+          <aside class="telemetry" aria-label="实时状态与操作记录">
+            <div class="telemetry__head">
+              <div><span class="telemetry__eyebrow">LIVE TELEMETRY</span><h3>实时状态</h3></div>
+              <span class="telemetry__online"><i></i>在线</span>
+            </div>
+
+            <div class="telemetry__block">
+              <div class="telemetry__block-head"><span>运行配置</span><small>CONFIGURATION</small></div>
+              <dl class="status-list">
+                <div><dt><span class="key-tag">F4</span>端位</dt><dd id="sideEnd"><b>本务</b><small>操纵端</small></dd></div>
+                <div><dt><span class="key-tag">F5</span>列车管</dt><dd id="sidePipe"><b>投入</b><small>TRAIN PIPE</small></dd></div>
+                <div><dt><span class="key-tag">F6</span>行车制式</dt><dd id="sideMode"><b>货车</b><small>FREIGHT</small></dd></div>
+                <div><dt><span class="key-tag">F7</span>补风</dt><dd id="sideFeed"><b>补风</b><small>FEED ON</small></dd></div>
+                <div><dt><span class="key-tag">DIM</span>屏幕亮度</dt><dd id="sideBright"><b>82%</b><small>自动</small></dd></div>
+              </dl>
+            </div>
+
+            <div class="pending-card" id="pendingCard" hidden>
+              <div class="pending-card__head"><span class="pending-dot"></span><b>有修改待确认</b><span id="pendingCount">0 项</span></div>
+              <p>参数尚未写入系统。按 F1 保存，或按 F2 放弃修改。</p>
+              <button type="button" class="pending-card__action" data-save-changes>按 F1 保存生效 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+            </div>
+
+            <div class="telemetry__log">
+              <div class="telemetry__block-head"><span>操作记录</span><small>EVENT LOG</small></div>
+              <ol class="log-list" id="logList"></ol>
+            </div>
+
+            <div class="telemetry__shortcuts">
+              <span><svg aria-hidden="true"><use href="#i-keyboard"></use></svg>键盘快捷</span>
+              <div><kbd>F1</kbd> 保存 <kbd>F2</kbd> 返回 <kbd>F4</kbd>–<kbd>F7</kbd> 切换</div>
+            </div>
+
+            <div class="telemetry__foot">
+              <button type="button" class="reset-button" id="resetButton"><svg aria-hidden="true"><use href="#i-reset"></use></svg>重置演示</button>
+              <span>LOCAL SESSION</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="softkeys section" id="softkeys">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-heading__meta">
+            <span class="section-num">02</span>
+            <span class="section-kicker">SOFT KEY MAP</span>
+          </div>
+          <div class="section-heading__row">
+            <h2>八个软键，一套完整的操作层</h2>
+            <div class="heading-side">
+              <span class="status-pill"><i></i>CCBⅡ 主界面</span>
+              <p>功能随页面变化，屏幕上方的文字始终与下方实体键一一对应。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="softkey-grid">
+          <article role="button" tabindex="0" class="function-card function-card--action" data-function-card="1">
+            <div class="function-card__top"><span class="function-code">F1</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-check"></use></svg></span><span class="function-tag">提交</span></div>
+            <div class="function-card__body"><h3>确认 / 执行</h3><span class="function-en">COMMIT &amp; EXECUTE</span><p>修改完参数后按 F1，将配置写入系统并立即生效。没有待保存项时，执行一次状态确认。</p></div>
+            <div class="function-card__foot"><span>主界面 · 保存</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="2">
+            <div class="function-card__top"><span class="function-code">F2</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-back"></use></svg></span><span class="function-tag function-tag--muted">导航</span></div>
+            <div class="function-card__body"><h3>退出 / 返回</h3><span class="function-en">EXIT / RETURN</span><p>从设置页或查询页返回主界面；在主界面按下时，放弃尚未确认的修改。</p></div>
+            <div class="function-card__foot"><span>返回上级 · 放弃</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="3">
+            <div class="function-card__top"><span class="function-code">F3</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-brake"></use></svg></span><span class="function-tag function-tag--blue">设置</span></div>
+            <div class="function-card__body"><h3>电空制动</h3><span class="function-en">ELECTRO-PNEUMATIC</span><p>进入 CCBⅡ 电空制动设置菜单，集中调整端位、列车管、制式与补风参数。</p></div>
+            <div class="function-card__foot"><span>进入设置菜单</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="4">
+            <div class="function-card__top"><span class="function-code">F4</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-swap"></use></svg></span><span class="function-tag function-tag--muted">端位</span></div>
+            <div class="function-card__body"><h3>操纵端切换</h3><span class="function-en">LEAD / TRAILING UNIT</span><p>在本务（操纵端）与补机（非操纵端）之间切换；切换结果需按 F1 保存。</p></div>
+            <div class="function-card__foot"><span>本务 / 补机</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="5">
+            <div class="function-card__top"><span class="function-code">F5</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-pipe"></use></svg></span><span class="function-tag function-tag--muted">管路</span></div>
+            <div class="function-card__body"><h3>列车管投入 / 切除</h3><span class="function-en">TRAIN PIPE CUT-IN / OUT</span><p>投入或切除列车管控制通路，当前状态同步显示在屏幕消息栏与压力表中。</p></div>
+            <div class="function-card__foot"><span>投入 / 切除</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="6">
+            <div class="function-card__top"><span class="function-code">F6</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-train"></use></svg></span><span class="function-tag function-tag--muted">制式</span></div>
+            <div class="function-card__body"><h3>货车 / 客车</h3><span class="function-en">FREIGHT / PASSENGER</span><p>切换列车制式。正常行车时应置于货车模式，特殊编组按运用要求选择。</p></div>
+            <div class="function-card__foot"><span>正常行车 · 货车</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card" data-function-card="7">
+            <div class="function-card__top"><span class="function-code">F7</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-wind"></use></svg></span><span class="function-tag function-tag--muted">补风</span></div>
+            <div class="function-card__body"><h3>补风 / 不补风</h3><span class="function-en">FEED VALVE ON / OFF</span><p>选择列车管补风方式。状态将在确认后写入运行配置，并显示在状态栏。</p></div>
+            <div class="function-card__foot"><span>补风 / 不补风</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+
+          <article role="button" tabindex="0" class="function-card function-card--query" data-function-card="8">
+            <div class="function-card__top"><span class="function-code">F8</span><span class="function-icon"><svg aria-hidden="true"><use href="#i-search"></use></svg></span><span class="function-tag function-tag--amber">诊断</span></div>
+            <div class="function-card__body"><h3>故障 · 记录 · 标定 · 自检</h3><span class="function-en">DIAGNOSTICS CENTER</span><p>打开查询中心，查看活动故障、运行事件、传感器标定值与五项自检结果。</p></div>
+            <div class="function-card__foot"><span>查询中心</span><i></i><span class="function-enter">在终端按下 <svg aria-hidden="true"><use href="#i-arrow"></use></svg></span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="backlight section" id="backlight">
+      <div class="container backlight__inner">
+        <div class="backlight__copy">
+          <div class="section-heading__meta">
+            <span class="section-num">03</span>
+            <span class="section-kicker">BACKLIGHT CONTROL</span>
+          </div>
+          <h2>左侧三键<br>独立控制屏幕明暗</h2>
+          <p>背光调节与运行参数互不干扰，按下即生效。自动模式下，系统根据环境光匹配屏幕亮度；按增亮或减亮键可随时切回手动。</p>
+          <div class="backlight__note">
+            <svg aria-hidden="true"><use href="#i-info"></use></svg>
+            <span>实体位置：屏幕左侧纵向排列。增亮 / 减亮每级约 10%，自动模式由环境光传感器接管。</span>
+          </div>
+        </div>
+
+        <div class="backlight__console">
+          <div class="brightness-panel">
+            <div class="brightness-panel__head"><span>SCREEN ILLUMINATION</span><span id="brightnessModeLabel">AUTO MODE</span></div>
+            <div class="brightness-panel__main">
+              <div class="lamp" id="brightnessLamp"><span></span><i></i></div>
+              <div class="brightness-panel__readout">
+                <span>当前屏幕亮度</span>
+                <strong id="brightnessValue">82<small>%</small></strong>
+                <div class="brightness-bar"><i id="brightnessBar" style="width:82%"></i></div>
+                <div class="brightness-panel__sub"><span id="brightnessModeText">自动 · 环境光 360 lx</span><span>20–100%</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="light-card-grid">
+            <button class="light-card" type="button" data-backlight="up">
+              <span class="light-card__icon"><svg aria-hidden="true"><use href="#i-sun-up"></use></svg></span>
+              <span><b>增亮键</b><small>BRIGHT +</small></span>
+              <em>+10%</em>
+            </button>
+            <button class="light-card" type="button" data-backlight="down">
+              <span class="light-card__icon"><svg aria-hidden="true"><use href="#i-sun-down"></use></svg></span>
+              <span><b>减亮键</b><small>BRIGHT −</small></span>
+              <em>−10%</em>
+            </button>
+            <button class="light-card" type="button" data-backlight="auto">
+              <span class="light-card__icon"><svg aria-hidden="true"><use href="#i-auto"></use></svg></span>
+              <span><b>自动亮度键</b><small>AUTO DIM</small></span>
+              <em id="autoCardState">ON</em>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow section" id="workflow">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-heading__meta">
+            <span class="section-num">04</span>
+            <span class="section-kicker">OPERATING SEQUENCE</span>
+          </div>
+          <div class="section-heading__row">
+            <h2>从选择到生效，只有四步</h2>
+            <p>遵循“先切换、后确认、再返回”的顺序，避免把未保存状态误认为已生效配置。</p>
+          </div>
+        </div>
+
+        <div class="workflow-grid">
+          <article class="step">
+            <div class="step__num">01</div>
+            <div class="step__icon"><svg aria-hidden="true"><use href="#i-brake"></use></svg></div>
+            <h3>进入主界面</h3>
+            <p>确认屏幕上方当前端位、制式、补风与列车管状态。</p>
+            <span class="step__key">MAIN SCREEN</span>
+          </article>
+          <article class="step">
+            <div class="step__num">02</div>
+            <div class="step__icon"><svg aria-hidden="true"><use href="#i-swap"></use></svg></div>
+            <h3>切换配置</h3>
+            <p>按 F4–F7 逐项选择。待确认项目会显示琥珀色提示。</p>
+            <span class="step__key">F4 — F7</span>
+          </article>
+          <article class="step step--accent">
+            <div class="step__num">03</div>
+            <div class="step__icon"><svg aria-hidden="true"><use href="#i-check"></use></svg></div>
+            <h3>确认执行</h3>
+            <p>按 F1 保存。只有确认后的配置才会写入系统并生效。</p>
+            <span class="step__key">F1 · COMMIT</span>
+          </article>
+          <article class="step">
+            <div class="step__num">04</div>
+            <div class="step__icon"><svg aria-hidden="true"><use href="#i-search"></use></svg></div>
+            <h3>返回或查询</h3>
+            <p>按 F2 返回主界面，或按 F8 进入故障、记录、标定与自检查询。</p>
+            <span class="step__key">F2 / F8</span>
+          </article>
+        </div>
+
+        <div class="notice-row">
+          <div class="notice notice--amber">
+            <svg aria-hidden="true"><use href="#i-gear"></use></svg>
+            <div><b>F3 电空制动设置</b><p>进入设置菜单集中调整四项运行配置；软键文字会随页面变化。</p></div>
+          </div>
+          <div class="notice">
+            <svg aria-hidden="true"><use href="#i-shield"></use></svg>
+            <div><b>安全提示</b><p>本页面是交互演示，不替代机型操作手册，严禁用于真实行车或维护作业。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="18" rx="4"/><path d="M8 23v3M24 23v3M9 23h14M9 10h14"/><path d="M11 14h3M18 14h3M11 18h10" class="brand__screen"/></svg>
+        </span>
+        <div><strong>LCDM / CCBⅡ</strong><span>LOCOMOTIVE BRAKE DISPLAY · INTERACTIVE CONCEPT</span></div>
+      </div>
+      <p class="footer__note">软键功能以 CCBⅡ 标准主界面为演示基础；不同机车、软件版本与运用工况可能存在差异。请以实车操作手册为准。</p>
+      <div class="footer__meta"><span>8 SOFT KEYS</span><span>3 DIMMER KEYS</span><span>© 2026</span></div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast__icon"><svg aria-hidden="true"><use href="#i-info"></use></svg></span>
+    <div><b id="toastTitle">状态已更新</b><span id="toastText"></span></div>
+    <i class="toast__progress"></i>
+  </div>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
